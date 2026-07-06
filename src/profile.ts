@@ -1,0 +1,57 @@
+import { z } from 'zod';
+import { UserPublicSchema } from './auth';
+
+/**
+ * Phase 2.1 — User profile (extends the auth `UserPublic` view) and 2.2 —
+ * emergency contacts.
+ */
+
+export const UserProfileSchema = UserPublicSchema.extend({
+  avatarUrl: z.string().nullable(), // presigned GET URL, resolved server-side
+  bio: z.string().nullable(),
+  phone: z.string().nullable(),
+  dateOfBirth: z.string().nullable(), // ISO-8601
+  location: z.string().nullable(),
+  updatedAt: z.string(), // ISO-8601 UTC
+});
+export type UserProfile = z.infer<typeof UserProfileSchema>;
+
+export const UpdateProfileRequestSchema = z
+  .object({
+    displayName: z.string().min(1).max(80),
+    bio: z.string().max(500).nullable(),
+    phone: z.string().max(40).nullable(),
+    dateOfBirth: z.string().nullable(), // ISO date string
+    location: z.string().max(120).nullable(),
+  })
+  .partial();
+export type UpdateProfileRequest = z.infer<typeof UpdateProfileRequestSchema>;
+
+/** Commit an uploaded avatar (objectKey from the presign step). */
+export const SetAvatarRequestSchema = z.object({ objectKey: z.string().min(1) });
+export type SetAvatarRequest = z.infer<typeof SetAvatarRequestSchema>;
+
+// --- Emergency contacts (2.2) ---
+
+export const EmergencyContactSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  phone: z.string(),
+  email: z.string().nullable(),
+  relation: z.string(),
+  priority: z.number().int(),
+  createdAt: z.string(),
+});
+export type EmergencyContact = z.infer<typeof EmergencyContactSchema>;
+
+export const CreateEmergencyContactSchema = z.object({
+  name: z.string().min(1).max(120),
+  phone: z.string().min(1).max(40),
+  email: z.string().email().max(254).nullable().optional(),
+  relation: z.string().min(1).max(60),
+  priority: z.number().int().min(1).max(99).default(1),
+});
+export type CreateEmergencyContactRequest = z.infer<typeof CreateEmergencyContactSchema>;
+
+export const UpdateEmergencyContactSchema = CreateEmergencyContactSchema.partial();
+export type UpdateEmergencyContactRequest = z.infer<typeof UpdateEmergencyContactSchema>;
