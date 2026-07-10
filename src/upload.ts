@@ -13,6 +13,7 @@ export const UploadScope = z.enum([
   'SERVICE_INVOICE',
   'GROUP_COVER',
   'ANNOUNCEMENT_MEDIA',
+  'EXPENSE_RECEIPT',
 ]);
 export type UploadScope = z.infer<typeof UploadScope>;
 

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { UserPublicSchema } from './auth';
+import { UnitSystem } from './common';
 
 /**
  * Phase 2.1 — User profile (extends the auth `UserPublic` view) and 2.2 —
@@ -12,6 +13,10 @@ export const UserProfileSchema = UserPublicSchema.extend({
   phone: z.string().nullable(),
   dateOfBirth: z.string().nullable(), // ISO-8601
   location: z.string().nullable(),
+  /** Reveal my phone to the other lift party while a lift is ACCEPTED (10.5). */
+  shareContactOnLift: z.boolean(),
+  /** ISO-4217 code for converted expense totals (10.3); null = no conversion. */
+  preferredCurrency: z.string().nullable(),
   updatedAt: z.string(), // ISO-8601 UTC
 });
 export type UserProfile = z.infer<typeof UserProfileSchema>;
@@ -23,6 +28,13 @@ export const UpdateProfileRequestSchema = z
     phone: z.string().max(40).nullable(),
     dateOfBirth: z.string().nullable(), // ISO date string
     location: z.string().max(120).nullable(),
+    shareContactOnLift: z.boolean(),
+    // Settings screen (Phase 9 polish)
+    locale: z.string().min(2).max(10),
+    timezone: z.string().min(1).max(64), // IANA tz, e.g. "Asia/Kathmandu"
+    unitSystem: UnitSystem,
+    // ISO-4217; converted expense totals (10.3). Null clears it.
+    preferredCurrency: z.string().regex(/^[A-Z]{3}$/).nullable(),
   })
   .partial();
 export type UpdateProfileRequest = z.infer<typeof UpdateProfileRequestSchema>;
