@@ -10,10 +10,20 @@ import { GroupUserSummarySchema } from './group';
 export const LiftStatus = z.enum(['OPEN', 'ACCEPTED', 'CANCELLED', 'COMPLETED']);
 export type LiftStatus = z.infer<typeof LiftStatus>;
 
+/**
+ * A lift party as the *other* party sees them. `phone` is present only while
+ * the lift is ACCEPTED, only for the two parties, and only if its owner's
+ * `shareContactOnLift` is true (Phase 10.5 contact reveal).
+ */
+export const LiftPartySchema = GroupUserSummarySchema.extend({
+  phone: z.string().nullable().optional(),
+});
+export type LiftParty = z.infer<typeof LiftPartySchema>;
+
 export const LiftRequestSchema = z.object({
   id: z.string(),
-  requester: GroupUserSummarySchema,
-  accepter: GroupUserSummarySchema.nullable(),
+  requester: LiftPartySchema,
+  accepter: LiftPartySchema.nullable(),
   fromLat: z.number(),
   fromLng: z.number(),
   fromLabel: z.string().nullable(),
@@ -73,3 +83,24 @@ export const LiftClosedEventSchema = z.object({
   status: LiftStatus,
 });
 export type LiftClosedEvent = z.infer<typeof LiftClosedEventSchema>;
+
+// --- Lift chat (Phase 10.5) ---
+// A temporary 2-party channel between requester and driver: writable while the
+// lift is ACCEPTED, readable after it closes.
+
+export const LiftMessageSchema = z.object({
+  id: z.string(),
+  liftId: z.string(),
+  author: GroupUserSummarySchema,
+  content: z.string(),
+  createdAt: z.string(),
+});
+export type LiftMessage = z.infer<typeof LiftMessageSchema>;
+
+export const SendLiftMessageSchema = z.object({
+  content: z.string().min(1).max(1000),
+});
+export type SendLiftMessageRequest = z.infer<typeof SendLiftMessageSchema>;
+
+/** Server → both parties' user rooms: a new lift chat message. */
+export type LiftMessageEvent = LiftMessage;
