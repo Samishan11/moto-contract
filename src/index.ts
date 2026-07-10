@@ -13,3 +13,7 @@ export * from './hazard';
 export * from './lift';
 export * from './nearby';
 export * from './sos';
+export * from './device';
+export * from './route';
+export * from './expense';
+export * from './call';

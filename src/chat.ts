@@ -129,6 +129,8 @@ export const SocketEvents = {
   RideParticipantLeft: 'ride:participant:left',
   /** Server → group room: leader changed the ride status (paused/resumed/ended). */
   RideStatus: 'ride:status',
+  /** Server → group room: a rider reached a trip stop (Phase 10.2). */
+  RideCheckpoint: 'ride:checkpoint',
   // --- Safety & emergency (Phase 7) ---
   /** Client → server: join the hazard broadcast room (map/ride open). */
   HazardSubscribe: 'hazard:subscribe',
@@ -142,6 +144,27 @@ export const SocketEvents = {
   SosResponded: 'sos:responded',
   /** Server → all alerted: the SOS was resolved. */
   SosResolved: 'sos:resolved',
+  // --- Group voice calls (Phase 11.1) ---
+  /** Client → server: start a call in a group. */
+  CallStart: 'call:start',
+  /** Client → server: join a group's live call. */
+  CallJoin: 'call:join',
+  /** Client → server: leave the call. */
+  CallLeave: 'call:leave',
+  /** Both directions: WebRTC offer/answer/ICE — server relays to the target's user room. */
+  CallSignal: 'call:signal',
+  /** Server → group room: a call went live. */
+  CallStarted: 'call:started',
+  /** Server → joining socket only: current mesh members to send offers to. */
+  CallParticipants: 'call:participants',
+  /** Server → call room: someone joined the mesh. */
+  CallParticipantJoined: 'call:participant:joined',
+  /** Server → call room: someone left the mesh. */
+  CallParticipantLeft: 'call:participant:left',
+  /** Server → group room: the call ended. */
+  CallEnded: 'call:ended',
+  /** Server → caller only: start/join/signal rejected. */
+  CallError: 'call:error',
   // --- Global nearby riders (RIDE tab) ---
   /** Client → server: my position while the nearby map is open. */
   PresenceLocation: 'presence:location',
@@ -156,6 +179,8 @@ export const SocketEvents = {
   LiftAccepted: 'lift:accepted',
   /** Server → rooms: a lift closed (cancelled/completed); remove it. */
   LiftClosed: 'lift:closed',
+  /** Server → both parties' user rooms: a lift chat message (Phase 10.5). */
+  LiftMessage: 'lift:message',
 } as const;
 
 export const MessageNewEventSchema = ChatMessageSchema;
