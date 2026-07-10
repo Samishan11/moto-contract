@@ -85,6 +85,9 @@ export const LocationSchema = z.object({
   heading: z.number().min(0).max(360).nullable().optional(),
   accuracy: z.number().min(0).nullable().optional(), // meters
   battery: z.number().min(0).max(100).nullable().optional(), // %
+  // Phase 10.2 — GPS altitude (meters). Bounds fit terrestrial riding
+  // (Dead Sea −430m … Everest 8849m) and reject barometric garbage.
+  altitude: z.number().min(-500).max(9000).nullable().optional(),
 });
 export type LocationRequest = z.infer<typeof LocationSchema>;
 
@@ -96,6 +99,7 @@ export const TrackPointSchema = z.object({
   speed: z.number().nullable(),
   heading: z.number().nullable(),
   battery: z.number().nullable(),
+  altitude: z.number().nullable(), // meters (Phase 10.2)
   timestamp: z.string(),
 });
 export type TrackPoint = z.infer<typeof TrackPointSchema>;
@@ -114,6 +118,8 @@ export const RideStatsSchema = z.object({
   participantCount: z.number().int(),
   /** userId of the rider who hit the highest instantaneous speed, or null. */
   topSpeedRiderId: z.string().nullable(),
+  /** Total climb in meters (leader's track), or null when no altitude data (Phase 10.2). */
+  totalAscentM: z.number().nullable(),
 });
 export type RideStats = z.infer<typeof RideStatsSchema>;
 
