@@ -138,6 +138,17 @@ export const CreateInviteSchema = z.object({
 });
 export type CreateInviteRequest = z.infer<typeof CreateInviteSchema>;
 
+/**
+ * What a still-usable invite token resolves to, before redeeming it — the join
+ * screen shows the group and opens it after accepting. `group.myRole` is set
+ * when the caller already belongs to the group (accepting would 409).
+ */
+export const InvitePreviewSchema = z.object({
+  group: GroupSchema,
+  expiresAt: z.string().nullable(),
+});
+export type InvitePreview = z.infer<typeof InvitePreviewSchema>;
+
 // --- Announcements ---
 
 export const AnnouncementSchema = z.object({
