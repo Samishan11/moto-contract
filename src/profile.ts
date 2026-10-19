@@ -67,3 +67,28 @@ export type CreateEmergencyContactRequest = z.infer<typeof CreateEmergencyContac
 
 export const UpdateEmergencyContactSchema = CreateEmergencyContactSchema.partial();
 export type UpdateEmergencyContactRequest = z.infer<typeof UpdateEmergencyContactSchema>;
+
+// --- Medical card (2.2) ---
+// Encrypted at rest. Shared only during an SOS: in the alert to emergency
+// contacts and with riders who answer "I'm coming" (Phase 7).
+
+export const BloodType = z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']);
+export type BloodType = z.infer<typeof BloodType>;
+
+const medicalText = z.string().trim().max(500).nullable();
+
+export const UpdateMedicalInfoSchema = z.object({
+  bloodType: BloodType.nullable(),
+  allergies: medicalText,
+  medications: medicalText,
+  conditions: medicalText,
+  /** Anything else a first responder should know (organ donor, implants, …). */
+  notes: medicalText,
+});
+export type UpdateMedicalInfoRequest = z.infer<typeof UpdateMedicalInfoSchema>;
+
+/** The medical card; every field null (and `updatedAt` null) until it's filled in. */
+export const MedicalInfoSchema = UpdateMedicalInfoSchema.extend({
+  updatedAt: z.string().nullable(),
+});
+export type MedicalInfo = z.infer<typeof MedicalInfoSchema>;

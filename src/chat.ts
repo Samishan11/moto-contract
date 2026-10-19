@@ -138,11 +138,11 @@ export const SocketEvents = {
   HazardNew: 'hazard:new',
   /** Server → riders on the map: remove an expired/deleted hazard. */
   HazardExpired: 'hazard:expired',
-  /** Server → nearby riders: someone triggered SOS within ~1km. */
+  /** Server → alerted riders' user rooms: someone nearby or in their ride triggered SOS. */
   SosTriggered: 'sos:triggered',
-  /** Server → SOS creator: a nearby rider is responding. */
+  /** Server → owner + alerted riders: an alerted rider is coming. */
   SosResponded: 'sos:responded',
-  /** Server → all alerted: the SOS was resolved. */
+  /** Server → owner + alerted riders: the SOS was resolved. */
   SosResolved: 'sos:resolved',
   // --- Group voice calls (Phase 11.1) ---
   /** Client → server: start a call in a group. */

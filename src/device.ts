@@ -20,11 +20,19 @@ export const RegisterDeviceSchema = z.object({
 export type RegisterDeviceRequest = z.infer<typeof RegisterDeviceSchema>;
 
 /**
- * Payload carried in a push notification's `data` field. `url` (a `moto://`
- * deep link) is what the client opens when the notification is tapped.
+ * Payload carried in a push notification's `data` field, one shape per `kind`.
+ * The client routes a tap on the notification to the screen for its ids.
  */
-export const PushDataSchema = z.object({
-  kind: z.string(),
-  url: z.string().optional(),
-});
+export const PushDataSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('trip:reminder'), tripId: z.string() }),
+  z.object({ kind: z.literal('hazard:new'), hazardId: z.string() }),
+  z.object({ kind: z.literal('call:started'), groupId: z.string(), callId: z.string() }),
+  z.object({ kind: z.literal('lift:accepted'), liftId: z.string() }),
+  z.object({ kind: z.literal('lift:message'), liftId: z.string() }),
+  z.object({ kind: z.literal('expense:settled'), expenseId: z.string(), groupId: z.string() }),
+  z.object({ kind: z.literal('sos:triggered'), sosId: z.string() }),
+  z.object({ kind: z.literal('sos:responded'), sosId: z.string() }),
+  z.object({ kind: z.literal('sos:resolved'), sosId: z.string() }),
+]);
 export type PushData = z.infer<typeof PushDataSchema>;
+export type PushKind = PushData['kind'];
