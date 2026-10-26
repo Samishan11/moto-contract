@@ -17,3 +17,4 @@ export * from './device';
 export * from './route';
 export * from './expense';
 export * from './call';
+export * from './navigation';

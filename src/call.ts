@@ -23,6 +23,11 @@ export const CallSignalPayloadSchema = z.object({
   type: z.enum(['offer', 'answer', 'ice']),
   sdp: z.string().optional(),
   candidate: z.unknown().optional(),
+  /** Which connection attempt this belongs to: chosen by the offerer, echoed
+   * in the answer and in both sides' ICE. After a rider rejoins, it tells
+   * signals for the new connection from ones for a replaced connection.
+   * Optional: apps before it don't send it. */
+  connection: z.string().optional(),
 });
 export type CallSignalPayload = z.infer<typeof CallSignalPayloadSchema>;
 
